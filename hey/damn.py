@@ -41,7 +41,7 @@ paw = Paw()
 all_sprites.add(paw)
 
 running = True
-FPS = 10
+FPS = 25
 
 while running:
     clock.tick(FPS)
