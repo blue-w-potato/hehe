@@ -8,7 +8,8 @@ clock = pg.time.Clock()
 
 images = {
     "background" : pg.image.load( os.path.join("hey", "image/background.png") ).convert(),
-    "paw" : pg.image.load( os.path.join("hey", "image/paw.png") ).convert()
+    "paw" : pg.image.load( os.path.join("hey", "image/paw.png") ).convert(),
+    "block" : pg.image.load( os.path.join("hey", "image/block.png") ).convert()
 }
 
 class Paw(pg.sprite.Sprite):
@@ -36,9 +37,43 @@ class Paw(pg.sprite.Sprite):
         self.image = self.images[self.current_angle_index]  
         self.rect = self.image.get_rect(center=self.rect.center)
 
+class Block(pg.sprite.Sprite):
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+        self.original_image = images['block']  
+        self.angle = 0 
+        self.image = pg.transform.rotate(self.original_image, self.angle)
+        self.x = 240
+        self.y = 0
+        self.rebound = False
+        self.rebound_y = self.y
+        self.fallin_distance = 0
+        self.rect = self.image.get_rect()
+        self.rect.center = (self.x, self.y)
+    
+    def update(self):
+        if self.rebound:
+            self.y -= 5
+            if self.y <= self.rebound_y - self.fallin_distance//3:
+                self.rebound = False
+                self.fallin_distance = 0
+        elif self.y<700:
+            self.y += 10
+            self.fallin_distance += 10
+        else:
+            self.y -= 5
+            if self.fallin_distance == 10:
+                self.fallin_distance = 0
+            else:
+                self.rebound_y = self.y
+                self.rebound = True
+        self.rect.center = (self.x, self.y)
+
 all_sprites = pg.sprite.Group()
 paw = Paw()
+block = Block()
 all_sprites.add(paw)
+all_sprites.add(block)
 
 running = True
 FPS = 25
